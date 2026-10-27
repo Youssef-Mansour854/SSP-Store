@@ -144,6 +144,25 @@ export default function HeadphoneScroller() {
     }
 
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+    // On mobile portrait where drawHeight doesn't cover 100% of vertical height:
+    // Seamlessly feather the top & bottom edges into studio background #ebebeb
+    if (canvasRatio < 1.0) {
+      // Top edge feather (pure #ebebeb down to transparent)
+      const topGrad = ctx.createLinearGradient(0, offsetY, 0, offsetY + 40);
+      topGrad.addColorStop(0, "#ebebeb");
+      topGrad.addColorStop(1, "rgba(235, 235, 235, 0)");
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(offsetX - 4, offsetY - 2, drawWidth + 8, 42);
+
+      // Bottom edge feather (transparent down to pure #ebebeb)
+      const botGrad = ctx.createLinearGradient(0, offsetY + drawHeight - 40, 0, offsetY + drawHeight);
+      botGrad.addColorStop(0, "rgba(235, 235, 235, 0)");
+      botGrad.addColorStop(1, "#ebebeb");
+      ctx.fillStyle = botGrad;
+      ctx.fillRect(offsetX - 4, offsetY + drawHeight - 40, drawWidth + 8, 42);
+    }
+
     currentFrameRef.current = frameIndex;
   }, []);
 
@@ -585,9 +604,7 @@ export default function HeadphoneScroller() {
           {/* ========================================================== */}
           <canvas
             ref={canvasRef}
-            className={`relative z-10 w-full h-full block pointer-events-none transform-gpu will-change-transform ${
-              isStage1 ? "mix-blend-darken" : "mix-blend-normal"
-            }`}
+            className="relative z-10 w-full h-full block pointer-events-none transform-gpu will-change-transform mix-blend-darken"
           />
 
           {/* Seamless Transition Overlay into Obsidian #000000 below */}
