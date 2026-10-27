@@ -552,10 +552,6 @@ export default function HeadphoneScroller() {
   const feat2Active = scrollProgress >= 0.88; // Battery 76h
   const feat3Active = scrollProgress >= 0.91; // Pure Bass
 
-  // Active component for Stage 3 Exploded Architecture on mobile (0.52 -> 0.80)
-  const s3Norm = Math.max(0, Math.min(1, (scrollProgress - 0.52) / 0.28));
-  const activeComponentIdx = Math.min(3, Math.floor(s3Norm * 4));
-
   return (
     <>
       {/* Preloader */}
@@ -671,33 +667,22 @@ export default function HeadphoneScroller() {
               </h3>
             </div>
 
-            {/* Mobile Sequenced Spotlight Card (Visible ONLY on mobile < md) */}
-            <div className="md:hidden absolute bottom-6 inset-x-4 pointer-events-auto">
-              <div className="bg-white/90 backdrop-blur-xl border border-black/[0.08] rounded-2xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
-                {/* Stepper Progress Indicators */}
-                <div className="flex items-center gap-1.5 mb-2.5">
-                  {STAGE3_COMPONENTS.map((_, idx) => (
-                    <div
-                      key={idx}
-                      className={`h-1 rounded-full transition-all duration-300 ${
-                        idx === activeComponentIdx ? "flex-1 bg-[#141416]" : "w-2 bg-black/15"
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {/* Active Component Details */}
-                <div className="text-right">
-                  <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-500 block mb-0.5">
-                    {STAGE3_COMPONENTS[activeComponentIdx].num}
-                  </span>
-                  <h4 className="text-sm font-black text-[#141416]">
-                    {STAGE3_COMPONENTS[activeComponentIdx].title}
-                  </h4>
-                  <p className="text-[11px] text-neutral-600 mt-1 leading-relaxed font-normal">
-                    {STAGE3_COMPONENTS[activeComponentIdx].desc}
-                  </p>
-                </div>
+            {/* Mobile 4-Item Floating Grid: ZERO background box, all visible TOGETHER */}
+            <div className="md:hidden absolute bottom-5 inset-x-3 pointer-events-auto select-none">
+              <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-right">
+                {STAGE3_COMPONENTS.map((item, idx) => (
+                  <div key={idx} className="space-y-0.5">
+                    <span className="text-[9px] font-mono font-bold text-neutral-500 block">
+                      {item.num}
+                    </span>
+                    <h4 className="text-xs font-black text-[#141416] leading-tight">
+                      {item.title}
+                    </h4>
+                    <p className="text-[10px] text-neutral-600 leading-snug font-normal">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -794,12 +779,12 @@ export default function HeadphoneScroller() {
                 </h3>
               </div>
 
-              {/* 3 Columns Responsive: 3 Compact Pills on Mobile, Full Cards on Desktop */}
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-6 lg:gap-8 text-center sm:text-right">
+              {/* 3 Columns Responsive: Pure Floating Typography - ZERO Background Boxes */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-6 lg:gap-8 text-center sm:text-right">
                 {/* Feature 1 */}
                 <div
-                  className={`p-2 sm:p-0 rounded-xl transition-all duration-300 ${
-                    feat1Active ? "opacity-100 bg-black/[0.04] sm:bg-transparent" : "opacity-30"
+                  className={`transition-all duration-300 ${
+                    feat1Active ? "opacity-100" : "opacity-35"
                   }`}
                 >
                   <span className="text-[9px] sm:text-xs font-mono font-bold text-neutral-500 block mb-0.5">
@@ -818,8 +803,8 @@ export default function HeadphoneScroller() {
 
                 {/* Feature 2 */}
                 <div
-                  className={`p-2 sm:p-0 rounded-xl transition-all duration-300 ${
-                    feat2Active ? "opacity-100 bg-black/[0.04] sm:bg-transparent" : "opacity-30"
+                  className={`transition-all duration-300 ${
+                    feat2Active ? "opacity-100" : "opacity-35"
                   }`}
                 >
                   <span className="text-[9px] sm:text-xs font-mono font-bold text-neutral-500 block mb-0.5">
@@ -838,8 +823,8 @@ export default function HeadphoneScroller() {
 
                 {/* Feature 3 */}
                 <div
-                  className={`p-2 sm:p-0 rounded-xl transition-all duration-300 ${
-                    feat3Active ? "opacity-100 bg-black/[0.04] sm:bg-transparent" : "opacity-30"
+                  className={`transition-all duration-300 ${
+                    feat3Active ? "opacity-100" : "opacity-35"
                   }`}
                 >
                   <span className="text-[9px] sm:text-xs font-mono font-bold text-neutral-500 block mb-0.5">
