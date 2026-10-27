@@ -136,8 +136,14 @@ export default function HeadphoneScroller() {
       offsetY = (canvasHeight - drawHeight) / 2;
     } else {
       // Portrait / Mobile screens:
-      // Scale headphone proportionally to fill ~85% of mobile width at razor-sharp Retina resolution
-      drawWidth = canvasWidth * 1.35;
+      // In Stage 1/2 (compact headphone), scale to 1.25x for prominent presence.
+      // In Stage 3/4 (exploded architecture), dynamically and smoothly pull back to ~0.96x
+      // so 100% of the decoupled earcups, brackets, and exploding parts fit completely within the phone screen!
+      const p = frameIndex / (TOTAL_FRAMES - 1);
+      const explodeT = smoothStep(0.35, 0.60, p);
+      const mobileScale = 1.25 - explodeT * 0.29; // Smoothly glides from 1.25 down to 0.96
+
+      drawWidth = canvasWidth * mobileScale;
       drawHeight = drawWidth / imgRatio;
       offsetX = (canvasWidth - drawWidth) / 2;
       offsetY = (canvasHeight - drawHeight) / 2;
@@ -146,21 +152,36 @@ export default function HeadphoneScroller() {
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
     // On mobile portrait where drawHeight doesn't cover 100% of vertical height:
-    // Seamlessly feather the top & bottom edges into studio background #ebebeb
+    // Seamlessly feather the edges into studio background #ebebeb
     if (canvasRatio < 1.0) {
       // Top edge feather (pure #ebebeb down to transparent)
-      const topGrad = ctx.createLinearGradient(0, offsetY, 0, offsetY + 40);
+      const topGrad = ctx.createLinearGradient(0, offsetY, 0, offsetY + 36);
       topGrad.addColorStop(0, "#ebebeb");
       topGrad.addColorStop(1, "rgba(235, 235, 235, 0)");
       ctx.fillStyle = topGrad;
-      ctx.fillRect(offsetX - 4, offsetY - 2, drawWidth + 8, 42);
+      ctx.fillRect(offsetX - 4, offsetY - 2, drawWidth + 8, 38);
 
       // Bottom edge feather (transparent down to pure #ebebeb)
-      const botGrad = ctx.createLinearGradient(0, offsetY + drawHeight - 40, 0, offsetY + drawHeight);
+      const botGrad = ctx.createLinearGradient(0, offsetY + drawHeight - 36, 0, offsetY + drawHeight);
       botGrad.addColorStop(0, "rgba(235, 235, 235, 0)");
       botGrad.addColorStop(1, "#ebebeb");
       ctx.fillStyle = botGrad;
-      ctx.fillRect(offsetX - 4, offsetY + drawHeight - 40, drawWidth + 8, 42);
+      ctx.fillRect(offsetX - 4, offsetY + drawHeight - 36, drawWidth + 8, 38);
+
+      // Side feathers if drawWidth is slightly narrower than canvas
+      if (offsetX > 0) {
+        const leftGrad = ctx.createLinearGradient(offsetX, 0, offsetX + 16, 0);
+        leftGrad.addColorStop(0, "#ebebeb");
+        leftGrad.addColorStop(1, "rgba(235, 235, 235, 0)");
+        ctx.fillStyle = leftGrad;
+        ctx.fillRect(offsetX - 2, offsetY, 18, drawHeight);
+
+        const rightGrad = ctx.createLinearGradient(offsetX + drawWidth - 16, 0, offsetX + drawWidth, 0);
+        rightGrad.addColorStop(0, "rgba(235, 235, 235, 0)");
+        rightGrad.addColorStop(1, "#ebebeb");
+        ctx.fillStyle = rightGrad;
+        ctx.fillRect(offsetX + drawWidth - 16, offsetY, 18, drawHeight);
+      }
     }
 
     currentFrameRef.current = frameIndex;
