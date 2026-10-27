@@ -30,6 +30,29 @@ function loadScript(src: string): Promise<void> {
 // Module-level global image cache so returning to Home is instantaneous
 let globalCachedImages: HTMLImageElement[] | null = null;
 
+const STAGE3_COMPONENTS = [
+  {
+    num: "01 / POWER CELL",
+    title: "بطارية ليثيوم 76 ساعة",
+    desc: "شحنة واحدة تدوم أسبوعين كاملين مع دارة حماية ذكية.",
+  },
+  {
+    num: "02 / DSP AUDIO CHIP",
+    title: "معالج الصوت المزدوج",
+    desc: "عزل ذكي متقدم ومعالجة فورية للموجات بدون أي تأخير زمني.",
+  },
+  {
+    num: "03 / MEMORY FOAM",
+    title: "وسائد الفوم المتكيفة",
+    desc: "جلد بروتيني فائق النعومة يتطابق مع تضاريس الأذن لعزل مريح.",
+  },
+  {
+    num: "04 / 40MM DRIVER",
+    title: "مكبر الصوت Pure Bass",
+    desc: "غشاء تيتانيوم صلب مع ملف نحاسي لنغمات بيس عميقة وتفاصيل نقية.",
+  },
+];
+
 export default function HeadphoneScroller() {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
@@ -510,6 +533,10 @@ export default function HeadphoneScroller() {
   const feat2Active = scrollProgress >= 0.88; // Battery 76h
   const feat3Active = scrollProgress >= 0.91; // Pure Bass
 
+  // Active component for Stage 3 Exploded Architecture on mobile (0.52 -> 0.80)
+  const s3Norm = Math.max(0, Math.min(1, (scrollProgress - 0.52) / 0.28));
+  const activeComponentIdx = Math.min(3, Math.floor(s3Norm * 4));
+
   return (
     <>
       {/* Preloader */}
@@ -528,10 +555,11 @@ export default function HeadphoneScroller() {
         >
           {/* ========================================================== */}
           {/* STAGE 1: Giant Typography BEHIND Headphone (z-0)           */}
-          {/* Full-bleed old style presentation                          */}
+          {/* Mobile: crowns the top cleanly above headphone earcups     */}
+          {/* Desktop: massive centered presentation                     */}
           {/* ========================================================== */}
           <div
-            className={`absolute inset-0 z-0 flex flex-col items-center justify-center select-none pointer-events-none transition-opacity duration-200 ${
+            className={`absolute inset-0 z-0 flex flex-col items-center justify-start pt-24 sm:justify-center sm:pt-0 select-none pointer-events-none transition-opacity duration-200 ${
               isStage1 ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -572,34 +600,35 @@ export default function HeadphoneScroller() {
 
           {/* ========================================================== */}
           {/* STAGE 2: Modern Lifestyle & Ergonomics (Hold Zone 1)       */}
-          {/* Pure Floating Typography - Zero Background Boxes           */}
+          {/* Mobile: sits in clear lower zone with zero overlap         */}
+          {/* Desktop: original elegant floating profile                 */}
           {/* ========================================================== */}
           <div
-            className="absolute inset-0 z-20 pointer-events-none flex items-center justify-start p-6 sm:px-14 lg:px-24 transition-opacity duration-500"
+            className="absolute inset-0 z-20 pointer-events-none flex flex-col justify-end sm:justify-center items-center sm:items-start p-6 sm:px-14 lg:px-24 pb-12 sm:pb-0 transition-opacity duration-500"
             style={{ opacity: stage2Opacity }}
           >
-            <div className="max-w-lg space-y-3 pointer-events-auto select-none">
-              <span className="text-xs font-mono font-bold tracking-[0.25em] text-neutral-500 uppercase block">
+            <div className="w-full max-w-lg space-y-2 sm:space-y-3 pointer-events-auto select-none text-center sm:text-right">
+              <span className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.25em] text-neutral-500 uppercase block">
                 AERODYNAMIC PROFILE
               </span>
 
-              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#141416] tracking-tight leading-[1.05]">
-                خفة استثنائية.<br />انسيابية تتنفس معك.
+              <h2 className="text-2xl sm:text-5xl lg:text-6xl font-black text-[#141416] tracking-tight leading-[1.1] sm:leading-[1.05]">
+                خفة استثنائية.<br className="hidden sm:inline" />انسيابية تتنفس معك.
               </h2>
 
-              <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-normal pt-1 max-w-md">
+              <p className="text-xs sm:text-base text-neutral-600 leading-relaxed font-normal pt-0.5 sm:pt-1 max-w-md mx-auto sm:mx-0">
                 هيكل مرن فائق الخفة يزن 220 غراماً فقط مع مفاصل دوران ثلاثية الأبعاد تلتف بسلاسة لترافقك بكل راحة طوال يومك في العمل، السفر والنادي.
               </p>
 
-              <div className="flex items-center gap-10 pt-4">
+              <div className="flex items-center justify-center sm:justify-start gap-8 sm:gap-10 pt-2 sm:pt-4">
                 <div>
                   <span className="block text-2xl sm:text-4xl font-black text-[#141416] font-mono">220g</span>
-                  <span className="text-xs text-neutral-500 font-medium tracking-wide">الوزن الكلي</span>
+                  <span className="text-[10px] sm:text-xs text-neutral-500 font-medium tracking-wide">الوزن الكلي</span>
                 </div>
-                <div className="w-[1px] h-10 bg-black/15" />
+                <div className="w-[1px] h-8 sm:h-10 bg-black/15" />
                 <div>
                   <span className="block text-2xl sm:text-4xl font-black text-[#141416] font-mono">3D Multi-Fold</span>
-                  <span className="text-xs text-neutral-500 font-medium tracking-wide">مفاصل الدوران</span>
+                  <span className="text-[10px] sm:text-xs text-neutral-500 font-medium tracking-wide">مفاصل الدوران</span>
                 </div>
               </div>
             </div>
@@ -607,7 +636,8 @@ export default function HeadphoneScroller() {
 
           {/* ========================================================== */}
           {/* STAGE 3: Exploded Architecture (Hold Zone 2)               */}
-          {/* Pure Floating Typography & Hairline Pointers               */}
+          {/* Mobile: Dynamic active component spotlight card at bottom  */}
+          {/* Desktop: 4 spatial callouts with hairlines                 */}
           {/* ========================================================== */}
           <div
             id="exploded-tech"
@@ -615,17 +645,47 @@ export default function HeadphoneScroller() {
             style={{ opacity: stage3Opacity }}
           >
             {/* Top Minimal Typography Title */}
-            <div className="absolute top-8 sm:top-10 left-1/2 -translate-x-1/2 pointer-events-none select-none text-center">
-              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] text-neutral-500 uppercase block mb-1">
+            <div className="absolute top-20 sm:top-10 left-1/2 -translate-x-1/2 pointer-events-none select-none text-center w-full px-4">
+              <span className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.25em] text-neutral-500 uppercase block mb-0.5 sm:mb-1">
                 INTERNAL ARCHITECTURE
               </span>
-              <h3 className="text-xl sm:text-2xl font-black text-[#141416] tracking-tight">
+              <h3 className="text-lg sm:text-2xl font-black text-[#141416] tracking-tight">
                 التشريح الهندسي الداخلي
               </h3>
             </div>
 
-            {/* 4 Pure Floating Spatial Callouts with Hairline Indicators */}
-            <div className="w-full h-full relative pointer-events-none">
+            {/* Mobile Sequenced Spotlight Card (Visible ONLY on mobile < md) */}
+            <div className="md:hidden absolute bottom-6 inset-x-4 pointer-events-auto">
+              <div className="bg-white/90 backdrop-blur-xl border border-black/[0.08] rounded-2xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+                {/* Stepper Progress Indicators */}
+                <div className="flex items-center gap-1.5 mb-2.5">
+                  {STAGE3_COMPONENTS.map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`h-1 rounded-full transition-all duration-300 ${
+                        idx === activeComponentIdx ? "flex-1 bg-[#141416]" : "w-2 bg-black/15"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* Active Component Details */}
+                <div className="text-right">
+                  <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-500 block mb-0.5">
+                    {STAGE3_COMPONENTS[activeComponentIdx].num}
+                  </span>
+                  <h4 className="text-sm font-black text-[#141416]">
+                    {STAGE3_COMPONENTS[activeComponentIdx].title}
+                  </h4>
+                  <p className="text-[11px] text-neutral-600 mt-1 leading-relaxed font-normal">
+                    {STAGE3_COMPONENTS[activeComponentIdx].desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Spatial Floating Callouts with Hairline Indicators (Desktop md+) */}
+            <div className="hidden md:block w-full h-full relative pointer-events-none">
               {/* Callout 1: Top-Left (Battery) */}
               <div className="absolute top-[20%] left-6 sm:left-12 lg:left-20 pointer-events-none select-none max-w-[260px]">
                 <span className="text-[11px] font-mono font-bold tracking-wider text-neutral-500 block">
@@ -637,7 +697,7 @@ export default function HeadphoneScroller() {
                 <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
                   شحنة واحدة تدوم أسبوعين كاملين مع دارة حماية ذكية.
                 </p>
-                <div className="hidden lg:flex items-center gap-2 mt-3">
+                <div className="flex items-center gap-2 mt-3">
                   <div className="w-14 h-[1.5px] bg-[#141416]" />
                   <div className="w-1.5 h-1.5 rounded-full bg-[#141416]" />
                 </div>
@@ -654,7 +714,7 @@ export default function HeadphoneScroller() {
                 <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
                   عزل ذكي متقدم ومعالجة فورية للموجات بدون أي تأخير زمني.
                 </p>
-                <div className="hidden lg:flex items-center gap-2 mt-3">
+                <div className="flex items-center gap-2 mt-3">
                   <div className="w-14 h-[1.5px] bg-[#141416]" />
                   <div className="w-1.5 h-1.5 rounded-full bg-[#141416]" />
                 </div>
@@ -671,7 +731,7 @@ export default function HeadphoneScroller() {
                 <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
                   جلد بروتيني فائق النعومة يتطابق مع تضاريس الأذن لعزل مريح.
                 </p>
-                <div className="hidden lg:flex items-center justify-end gap-2 mt-3">
+                <div className="flex items-center justify-end gap-2 mt-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#141416]" />
                   <div className="w-14 h-[1.5px] bg-[#141416]" />
                 </div>
@@ -688,7 +748,7 @@ export default function HeadphoneScroller() {
                 <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
                   غشاء تيتانيوم صلب مع ملف نحاسي لنغمات بيس عميقة وتفاصيل نقية.
                 </p>
-                <div className="hidden lg:flex items-center justify-end gap-2 mt-3">
+                <div className="flex items-center justify-end gap-2 mt-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#141416]" />
                   <div className="w-14 h-[1.5px] bg-[#141416]" />
                 </div>
@@ -697,71 +757,86 @@ export default function HeadphoneScroller() {
           </div>
 
           {/* ========================================================== */}
-          {/* STAGE 4: Performance Highlights (0.73 -> 0.98)             */}
-          {/* Pure Floating Typography in Clean Lower Viewport Strip     */}
-          {/* Completely clear of headphone parts with zero background   */}
+          {/* STAGE 4: Performance Highlights (0.82 -> 0.98)             */}
+          {/* Mobile: 3 responsive compact pills with zero visual clash  */}
+          {/* Desktop: 3 comprehensive editorial feature columns         */}
           {/* ========================================================== */}
           <div
             id="features"
-            className="absolute inset-x-0 bottom-6 sm:bottom-10 z-20 pointer-events-none flex flex-col items-center justify-end px-4 sm:px-8 lg:px-16 transition-opacity duration-300"
+            className="absolute inset-x-0 bottom-4 sm:bottom-10 z-20 pointer-events-none flex flex-col items-center justify-end px-3 sm:px-8 lg:px-16 transition-opacity duration-300"
             style={{ opacity: stage4Opacity }}
           >
             <div className="w-full max-w-5xl mx-auto pointer-events-auto select-none">
               {/* Header */}
-              <div className="text-center mb-3 sm:mb-5">
-                <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] text-neutral-500 uppercase block mb-1">
+              <div className="text-center mb-2 sm:mb-5">
+                <span className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.25em] text-neutral-500 uppercase block mb-0.5 sm:mb-1">
                   ACOUSTIC MASTERY
                 </span>
-                <h3 className="text-xl sm:text-3xl font-black text-[#141416] tracking-tight">
+                <h3 className="text-lg sm:text-3xl font-black text-[#141416] tracking-tight">
                   أداء صوتي يفوق التوقعات
                 </h3>
               </div>
 
-              {/* 3 Columns in the Clear Bottom Space */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 lg:gap-8 text-center sm:text-right">
+              {/* 3 Columns Responsive: 3 Compact Pills on Mobile, Full Cards on Desktop */}
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-6 lg:gap-8 text-center sm:text-right">
                 {/* Feature 1 */}
                 <div
-                  className={`transition-all duration-500 ${
-                    feat1Active ? "opacity-100 translate-y-0" : "opacity-20 translate-y-2"
+                  className={`p-2 sm:p-0 rounded-xl transition-all duration-300 ${
+                    feat1Active ? "opacity-100 bg-black/[0.04] sm:bg-transparent" : "opacity-30"
                   }`}
                 >
-                  <span className="text-xs font-mono font-bold text-neutral-500 block mb-0.5">01 / HYBRID ANC</span>
-                  <h4 className="text-sm sm:text-base font-bold text-[#141416]">
+                  <span className="text-[9px] sm:text-xs font-mono font-bold text-neutral-500 block mb-0.5">
+                    01 / ANC
+                  </span>
+                  <h4 className="text-xs sm:text-base font-bold text-[#141416] leading-tight">
                     عزل الصوت الذكي
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-neutral-600 mt-1 leading-relaxed font-normal">
+                  <p className="hidden sm:block text-[11px] sm:text-xs text-neutral-600 mt-1 leading-relaxed font-normal">
                     يعزل حتى 95% من الضوضاء المحيطة لنقاء صوتي كامل.
                   </p>
+                  <span className="sm:hidden text-[10px] text-neutral-500 font-medium block mt-0.5">
+                    عزل 95%
+                  </span>
                 </div>
 
                 {/* Feature 2 */}
                 <div
-                  className={`transition-all duration-500 ${
-                    feat2Active ? "opacity-100 translate-y-0" : "opacity-20 translate-y-2"
+                  className={`p-2 sm:p-0 rounded-xl transition-all duration-300 ${
+                    feat2Active ? "opacity-100 bg-black/[0.04] sm:bg-transparent" : "opacity-30"
                   }`}
                 >
-                  <span className="text-xs font-mono font-bold text-neutral-500 block mb-0.5">02 / BATTERY LIFE</span>
-                  <h4 className="text-sm sm:text-base font-bold text-[#141416]">
-                    بطارية تدوم 76 ساعة
+                  <span className="text-[9px] sm:text-xs font-mono font-bold text-neutral-500 block mb-0.5">
+                    02 / BATTERY
+                  </span>
+                  <h4 className="text-xs sm:text-base font-bold text-[#141416] leading-tight">
+                    بطارية 76 ساعة
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-neutral-600 mt-1 leading-relaxed font-normal">
+                  <p className="hidden sm:block text-[11px] sm:text-xs text-neutral-600 mt-1 leading-relaxed font-normal">
                     استخدام أسبوعين كاملين مع شحن فائق السرعة.
                   </p>
+                  <span className="sm:hidden text-[10px] text-neutral-500 font-medium block mt-0.5">
+                    شحن سريع
+                  </span>
                 </div>
 
                 {/* Feature 3 */}
                 <div
-                  className={`transition-all duration-500 ${
-                    feat3Active ? "opacity-100 translate-y-0" : "opacity-20 translate-y-2"
+                  className={`p-2 sm:p-0 rounded-xl transition-all duration-300 ${
+                    feat3Active ? "opacity-100 bg-black/[0.04] sm:bg-transparent" : "opacity-30"
                   }`}
                 >
-                  <span className="text-xs font-mono font-bold text-neutral-500 block mb-0.5">03 / PURE BASS</span>
-                  <h4 className="text-sm sm:text-base font-bold text-[#141416]">
-                    صوت JBL Pure Bass
+                  <span className="text-[9px] sm:text-xs font-mono font-bold text-neutral-500 block mb-0.5">
+                    03 / BASS
+                  </span>
+                  <h4 className="text-xs sm:text-base font-bold text-[#141416] leading-tight">
+                    صوت Pure Bass
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-neutral-600 mt-1 leading-relaxed font-normal">
+                  <p className="hidden sm:block text-[11px] sm:text-xs text-neutral-600 mt-1 leading-relaxed font-normal">
                     نغمات بيس عميقة وطبقات صوت سينمائية واضحة.
                   </p>
+                  <span className="sm:hidden text-[10px] text-neutral-500 font-medium block mt-0.5">
+                    بيس عميق
+                  </span>
                 </div>
               </div>
             </div>
