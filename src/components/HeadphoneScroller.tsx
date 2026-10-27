@@ -535,9 +535,9 @@ export default function HeadphoneScroller() {
 
   // 1. Hero / Intro: 0.00 -> 0.16 (S-curve fade-out)
   const isStage1 = scrollProgress < 0.16;
-  const stage1Opacity = 1 - smoothStep(0.06, 0.15, scrollProgress);
-  const stage1TranslateY = -scrollProgress * 450;
-  const stage1Scale = 1 + scrollProgress * 0.25;
+  const stage1Opacity = 1 - smoothStep(0.05, 0.15, scrollProgress);
+  const stage1TranslateY = -scrollProgress * 600;
+  const stage1Scale = 1 + scrollProgress * 0.18;
 
   // 2. Design & Ergonomics: 0.18 -> 0.48 (matches headphone rotating to profile)
   const stage2Opacity =
@@ -590,12 +590,12 @@ export default function HeadphoneScroller() {
           className="sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center bg-[#ebebeb] transform-gpu will-change-transform"
         >
           {/* ========================================================== */}
-          {/* STAGE 1: Giant Typography BEHIND Headphone (z-0)           */}
-          {/* Mobile: crowns the top cleanly above headphone earcups     */}
-          {/* Desktop: massive centered presentation                     */}
+          {/* STAGE 1: Giant Typography Centered with Headphone (z-0)    */}
+          {/* Mobile & Desktop: monumental centered presentation         */}
+          {/* Scrolls upwards and fades out as you scroll                */}
           {/* ========================================================== */}
           <div
-            className={`absolute inset-0 z-0 flex flex-col items-center justify-start pt-24 sm:justify-center sm:pt-0 select-none pointer-events-none transition-opacity duration-200 ${
+            className={`absolute inset-0 z-0 flex flex-col items-center justify-center select-none pointer-events-none transition-opacity duration-200 ${
               isStage1 ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -606,10 +606,10 @@ export default function HeadphoneScroller() {
                 opacity: stage1Opacity,
               }}
             >
-              <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[14rem] font-black tracking-tighter text-[#141414] leading-[0.88]">
+              <h1 className="text-6xl sm:text-8xl md:text-9xl lg:text-[14rem] font-black tracking-tighter text-[#141414] leading-[0.88]">
                 JBL TUNE
               </h1>
-              <div className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-black tracking-tight mt-1">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-black tracking-tight mt-1 sm:mt-2">
                 730BT
               </div>
             </div>
